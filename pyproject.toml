@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "minitorch"
+version = "0.1.0"
+description = "MiniTorch educational deep learning scaffold"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "MiniTorch" }]
+
+[tool.setuptools]
+py-modules = ["train"]
+
+[tool.setuptools.packages.find]
+include = ["autograd*", "nn*", "optim*", "data*", "training*", "examples*"]
