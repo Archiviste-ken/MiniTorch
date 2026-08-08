@@ -54,3 +54,35 @@ class Value:
 
         # Function used during backpropagation.
         self._backward = lambda: None
+        
+    def __add__(self, other):
+        
+        """
+        Add two Value objects.
+
+        This performs two jobs:
+
+        1. Compute the numerical result.
+        2. Extend the computational graph.
+        """
+
+        # Allow expressions like:
+        # Value + 3
+        if not isinstance(other, Value):
+            other = Value(other)
+
+        # Create the output node.
+        out = Value(self.data + other.data)
+
+        # Remember how this node was created.
+        out._prev = {self, other}
+        out._op = "+"
+
+        # Backpropagation rule.
+        def _backward():
+            self.grad += out.grad
+            other.grad += out.grad
+
+        out._backward = _backward
+
+        return out   
