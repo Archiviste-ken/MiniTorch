@@ -85,4 +85,40 @@ class Value:
 
         out._backward = _backward
 
-        return out   
+        return out  
+    
+    def backward(self):
+        """
+        Run backpropagation through the computation graph.
+        """
+
+        # --------------------------------------------------
+        # 1. Build topological ordering
+        # --------------------------------------------------
+
+        topo = []
+        visited = set()
+
+        def build_topo(node):
+            if node not in visited:
+                visited.add(node)
+
+                for parent in node._prev:
+                    build_topo(parent)
+
+                topo.append(node)
+
+        build_topo(self)
+
+        # --------------------------------------------------
+        # 2. Seed the final node's gradient
+        # --------------------------------------------------
+
+        self.grad = 1.0
+
+        # --------------------------------------------------
+        # 3. Traverse graph backwards
+        # --------------------------------------------------
+
+        for node in reversed(topo):
+            node._backward() 
