@@ -150,4 +150,31 @@ class Value:
 
         return out
     
+    def __radd__(self, other):
+     return self + other
+
+
+    def __rmul__(self, other):
+     return self * other
+ 
+    def __neg__(self):
+        out = Value(-self.data)
+
+        out._prev = {self}
+        out._op = "neg"
+
+        def _backward():
+            self.grad += -out.grad
+
+        out._backward = _backward
+
+        return out
     
+    def __sub__(self, other):
+        if not isinstance(other, Value):
+            other = Value(other)
+
+        return self + (-other)
+    
+    def __rsub__(self, other):
+        return other + (-self)
