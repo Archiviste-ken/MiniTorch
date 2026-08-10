@@ -178,3 +178,29 @@ class Value:
     
     def __rsub__(self, other):
         return other + (-self)
+    
+    def __truediv__(self, other):
+        """
+        Divide two Value objects.
+        """
+        if not isinstance(other, Value):
+            other = Value(other)
+
+        # Forward pass
+        out = Value(self.data / other.data)
+
+        # Build graph
+        out._prev = {self, other}
+        out._op = "/"
+
+        # Backward pass
+        def _backward():
+            self.grad += (1.0 / other.data) * out.grad
+            other.grad += (-self.data / (other.data ** 2)) * out.grad
+
+        out._backward = _backward
+
+        return out
+    
+    def __rtruediv__(self, other):
+        return Value(other) / self
