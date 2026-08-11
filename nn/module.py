@@ -37,25 +37,23 @@ class Module:
 
         params = []
 
-        for value in self.__dict__.values():
+        def collect(value):
 
             # Direct parameter
             if hasattr(value, "data") and hasattr(value, "grad"):
                 params.append(value)
 
-            # Child module
+            # Child Module
             elif isinstance(value, Module):
                 params.extend(value.parameters())
 
-            # List of child modules / parameters
-            elif isinstance(value, list):
+            # Container
+            elif isinstance(value, (list, tuple)):
                 for item in value:
+                    collect(item)
 
-                    if hasattr(item, "data") and hasattr(item, "grad"):
-                        params.append(item)
-
-                    elif isinstance(item, Module):
-                        params.extend(item.parameters())
+        for value in self.__dict__.values():
+            collect(value)
 
         return params
 
