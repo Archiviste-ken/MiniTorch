@@ -73,3 +73,4 @@ class Linear(Module):
             outputs.append(total)
 
         return outputs
+    
